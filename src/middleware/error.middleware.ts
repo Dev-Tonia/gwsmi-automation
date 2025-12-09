@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../types/app-error";
+import { createAppError } from "../utils/error.util";
 
 const errorMiddleware = (
   err: unknown,
@@ -16,17 +17,13 @@ const errorMiddleware = (
     // wrong mongoose object id
     if (incoming?.name === "CastError") {
       const message = `Resource not found. Invalid: ${incoming.path}`;
-      const e = new Error(message) as AppError;
-      e.statusCode = 404;
-      error = e;
+      error = createAppError(message, 404);
     }
 
     // mongoose duplicate key
     if (incoming?.code === 11000) {
       const message = `Duplicate ${Object.keys(incoming.keyValue || {}).join(", ")} entered`;
-      const e = new Error(message) as AppError;
-      e.statusCode = 400;
-      error = e;
+      throw createAppError(message, 400);
     }
 
     // mongoose validation error
@@ -34,9 +31,7 @@ const errorMiddleware = (
       const messages = Object.values(incoming.errors || {}).map(
         (v) => v.message
       );
-      const e = new Error(messages.join(", ")) as AppError;
-      e.statusCode = 422;
-      error = e;
+      error = createAppError(messages.join(", "), 422);
     }
 
     res.status(error.statusCode ?? 500).json({

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { config } from "../config/index";
+import { config } from "./index";
 
 if (!config.dbUri) {
   throw new Error("DB_URI is not defined in environment variables");

@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import morgan from "morgan";
 import cors from "cors";
+import errorMiddleware from "./middleware/error.middleware";
+import router from "./routes/index";
 
 export const createServer = () => {
   const app = express();
@@ -10,6 +12,9 @@ export const createServer = () => {
     .use(express.urlencoded({ extended: true }))
     .use(express.json())
     .use(cors());
+
+  app.use("/api/v1", router);
+  app.use(errorMiddleware);
 
   app.get("/", (req: Request, res: Response) => {
     res.json({ message: "Welcome to the GSWMI LOGISTICS AUTOMATION API" });

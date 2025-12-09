@@ -1,6 +1,6 @@
 import { createServer } from "./server";
 import { config } from "./config";
-import connectDB from "./config/db";
+import connectDB from "./config/db.config";
 
 const server = createServer();
 
