@@ -1,16 +1,19 @@
 // src/services/user.service.ts
 import User from "../models/user.model";
-import { ICreateUserInput } from "../schemas/createUser.schema";
+import { ICreateUserInput } from "../database/schemas/createUser.schema";
 import bcrypt from "bcrypt";
 import { config } from "../config";
 import mongoose from "mongoose";
+import { createAppError } from "../utils/error.util";
 
 export const UserService = {
   async createUser(data: ICreateUserInput, session?: mongoose.ClientSession) {
     const existing = await User.findOne({ username: data.username }).session(
       session ?? null
     );
-    if (existing) throw new Error("Username already exists");
+    if (existing) {
+      throw createAppError("Username already exists", 409);
+    }
 
     const hashedPassword = await bcrypt.hash(
       data.password,

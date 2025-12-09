@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { ICreateUserInput } from "../schemas/createUser.schema";
+import { ICreateUserInput } from "../database/schemas/createUser.schema";
+import { PERMISSIONS } from "../utils/constants/permissions";
 
 export interface IUser extends ICreateUserInput, Document {}
 
@@ -31,6 +32,7 @@ const UserSchema = new Schema<IUser>(
     },
     permissions: {
       type: [String],
+      enum: PERMISSIONS,
       default: [],
     },
   },

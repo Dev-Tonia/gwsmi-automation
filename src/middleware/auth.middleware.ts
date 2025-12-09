@@ -1,39 +1,40 @@
+// src/middleware/auth.middleware.ts
+import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/user.model.js";
-import { verifyJwt } from "../utils/token.util.js";
-import { Response, Request, NextFunction } from "express";
+import User from "../models/user.model";
+import { AuthenticatedRequest } from "../types/authenticated-request";
 
-const authorize = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    let token: string | undefined;
-
-    // check if there's bearer token on the headers
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    }
+    const token = req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      return res.status(401).send({ message: "Unauthorized" });
+      res.status(401).json({ error: "Authentication required" });
+      return;
     }
 
-    // verify the token (tell TS what the decoded shape is)
-    const decoded = verifyJwt<{ id: string }>(token);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      id: string;
+    };
 
-    // check if the user exist
-    const user = await User.findById(decoded.id);
+    const user = await User.findOne({
+      _id: decoded.id,
+    });
+
+    console.log(user);
+
     if (!user) {
-      return res.status(401).send({ message: "Unauthorized" });
+      res.status(401).json({ error: "User not found" });
+      return;
     }
 
-    req.user = user;
+    req.user = user; // TypeScript should now recognize this property
     next();
-  } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : String(error);
-    res.status(401).send({ message: "Unauthorized", error: errMsg });
+  } catch (error) {
+    res.status(401).json({ error: "Authentication failed" });
   }
 };
-
-export default authorize;

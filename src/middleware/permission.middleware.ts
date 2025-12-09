@@ -1,10 +1,11 @@
 // src/middleware/permission.middleware.ts
 import { Request, Response, NextFunction } from "express";
 import { Permission } from "../utils/constants/permissions";
+import { AuthenticatedRequest } from "../types/authenticated-request";
 
 export const requirePermission =
   (permission: Permission) =>
-  (req: Request, res: Response, next: NextFunction) => {
+  (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const user = req.user; // typed as IUser | undefined thanks to declaration merging
 
     if (!user) {

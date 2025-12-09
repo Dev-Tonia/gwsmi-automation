@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PERMISSIONS } from "../utils/constants/permissions";
+import { PERMISSIONS } from "../../utils/constants/permissions";
 
 export const createUserSchema = z.object({
   fullName: z.string().min(3, "User full name is required"),
