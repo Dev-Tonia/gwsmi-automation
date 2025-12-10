@@ -2,7 +2,12 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model";
+import TokenBlacklist from "../models/tokenBlacklist.model";
+import { verifyJwt } from "../utils/token.util";
+import { createAppError } from "../utils/error.util";
 import { AuthenticatedRequest } from "../types/authenticated-request";
+
+type JwtUserPayload = { id: string; iat?: number; exp?: number };
 
 export const authenticate = async (
   req: AuthenticatedRequest,
@@ -10,31 +15,44 @@ export const authenticate = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // 1. Extract token
     const token = req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      res.status(401).json({ error: "Authentication required" });
-      return;
+      return next(createAppError("Authentication required", 401));
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      id: string;
-    };
+    // 2. Check blacklist
+    const blacklisted = await TokenBlacklist.findOne({ token });
+    if (blacklisted) {
+      return next(
+        createAppError("Token has been revoked. Please login again.", 401)
+      );
+    }
 
-    const user = await User.findOne({
-      _id: decoded.id,
-    });
+    // 3. Verify token
+    const decoded = verifyJwt<JwtUserPayload>(token);
 
-    console.log(user);
-
+    // 4. Find user
+    const user = await User.findById(decoded.id);
     if (!user) {
-      res.status(401).json({ error: "User not found" });
-      return;
+      return next(createAppError("User not found", 401));
     }
 
-    req.user = user; // TypeScript should now recognize this property
-    next();
-  } catch (error) {
-    res.status(401).json({ error: "Authentication failed" });
+    // 5. Attach user
+    req.user = user;
+    req.token = token;
+    return next();
+  } catch (error: any) {
+    // JWT-specific errors
+    if (error instanceof jwt.JsonWebTokenError) {
+      return next(createAppError("Invalid token", 401));
+    }
+
+    if (error instanceof jwt.TokenExpiredError) {
+      return next(createAppError("Token expired", 401));
+    }
+
+    return next(createAppError("Authentication failed", 401));
   }
 };
