@@ -5,8 +5,9 @@ export async function deleteFileIfExists(filePath?: string) {
 
   try {
     await fs.unlink(filePath);
-  } catch (err) {
-    // File might not exist or already deleted — ignore safely
-    console.error("Failed to delete file:", err);
+  } catch (err: any) {
+    if (err.code !== "ENOENT") {
+      console.error("Failed to delete file:", err);
+    }
   }
 }

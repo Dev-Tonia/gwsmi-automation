@@ -8,39 +8,36 @@ const errorMiddleware = (
   res: Response,
   next: NextFunction
 ): void => {
-  try {
-    const incoming = err as AppError;
-    let error: AppError = { ...incoming } as AppError;
-    error.message = incoming?.message || "Server Error";
-    console.error(incoming);
+  let error = err as AppError;
 
-    // wrong mongoose object id
-    if (incoming?.name === "CastError") {
-      const message = `Resource not found. Invalid: ${incoming.path}`;
-      error = createAppError(message, 404);
-    }
+  // Default values
+  let statusCode = error.statusCode || 500;
+  let message = error.message || "Server Error";
 
-    // mongoose duplicate key
-    if (incoming?.code === 11000) {
-      const message = `Duplicate ${Object.keys(incoming.keyValue || {}).join(", ")} entered`;
-      throw createAppError(message, 400);
-    }
-
-    // mongoose validation error
-    if (incoming?.name === "ValidationError") {
-      const messages = Object.values(incoming.errors || {}).map(
-        (v) => v.message
-      );
-      error = createAppError(messages.join(", "), 422);
-    }
-
-    res.status(error.statusCode ?? 500).json({
-      success: false,
-      error: error.message ?? "Server Error",
-    });
-  } catch (e) {
-    next(e);
+  // Wrong mongoose ObjectId
+  if (error?.name === "CastError") {
+    statusCode = 404;
+    message = `Resource not found. Invalid: ${error.path}`;
   }
+
+  // Mongo duplicate key error
+  if ((error as any)?.code === 11000) {
+    statusCode = 400;
+    message = `Duplicate ${Object.keys((error as any).keyValue).join(", ")} entered`;
+  }
+
+  // Mongoose validation error
+  if (error?.name === "ValidationError") {
+    statusCode = 422;
+    message = Object.values(error.errors || {})
+      .map((val: any) => val.message)
+      .join(", ");
+  }
+
+  res.status(statusCode).json({
+    success: false,
+    error: message,
+  });
 };
 
 export default errorMiddleware;
