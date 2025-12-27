@@ -22,7 +22,7 @@ export const AuthController = {
 
   async logout(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const token = req.token; // from your authenticate middleware
+      const token = req.token;
 
       if (!token) {
         return next(createAppError("Token missing", 401));

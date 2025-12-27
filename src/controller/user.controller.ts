@@ -23,7 +23,7 @@ export const UserController = {
         data: { user },
       });
     } catch (error) {
-      if (process.env.NODE_ENV === "production") {
+      if (config.nodeEnv === "production") {
         await session.abortTransaction();
       }
       next(error);

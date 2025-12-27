@@ -9,13 +9,14 @@ export const requirePermission =
     const user = req.user; // typed as IUser | undefined thanks to declaration merging
 
     if (!user) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
     if (!user.permissions?.includes(permission)) {
-      return res
-        .status(403)
-        .json({ message: "Forbidden: Insufficient permissions" });
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden: Insufficient permissions",
+      });
     }
 
     next();
