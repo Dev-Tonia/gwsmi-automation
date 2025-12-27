@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { PERMISSIONS } from "../../utils/constants/permissions";
 
-export const createUserSchema = z.object({
+export const CreateUserDTO = z.object({
   fullName: z.string().min(3, "User full name is required"),
   username: z
     .string()
@@ -12,4 +12,6 @@ export const createUserSchema = z.object({
   permissions: z.array(z.enum(PERMISSIONS)).optional().default([]),
 });
 
-export type ICreateUserInput = z.infer<typeof createUserSchema>;
+// export type ICreateUserInput = z.infer<typeof createUserSchema>;
+
+export type CreateUserDTO = z.infer<typeof CreateUserDTO>;

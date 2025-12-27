@@ -1,6 +1,6 @@
 // src/services/user.service.ts
 import User from "../models/user.model";
-import { ICreateUserInput } from "../database/schemas/createUser.schema";
+import { ICreateUserInput } from "../dtos/user/createUser.dto";
 import bcrypt from "bcrypt";
 import { config } from "../config";
 import mongoose from "mongoose";
