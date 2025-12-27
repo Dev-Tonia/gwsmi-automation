@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-export const LoginSchema = z.object({
+export const AuthUserDTO = z.object({
   body: z.object({
     username: z.string().min(1, "Username is required"),
     password: z.string().min(1, "Password is required"),
   }),
 });
 
-export type ILoginInput = z.infer<typeof LoginSchema>["body"];
+export type AuthUserDTOType = z.infer<typeof AuthUserDTO>["body"];

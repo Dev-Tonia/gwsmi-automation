@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { CreateUserDTO } from "../dtos/user/createUser.dto";
+import { CreateUserDTOType } from "../dtos/user/create-user.dto";
 import { PERMISSIONS } from "../utils/constants/permissions";
 
-export interface IUser extends CreateUserDTO, Document {}
+export interface IUser extends CreateUserDTOType, Document {}
 
 const UserSchema = new Schema<IUser>(
   {

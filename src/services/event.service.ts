@@ -1,71 +1,67 @@
+// services/event.service.ts
 import mongoose from "mongoose";
-import { IEventInput } from "../database/schemas/event.schema";
 import Event from "../models/events.model";
-import { UpdateEventDTOType } from "../dtos/event/updateEvent.dto";
-import { EventParamsDTOType } from "../dtos/event/eventParams.dto";
+import { CreateEventDTOType } from "../dtos/event/create-event.dto";
+import { UpdateEventDTOType } from "../dtos/event/update-event.dto";
+import { EventParamsDTOType } from "../dtos/event/event-params.dto";
 import { createAppError } from "../utils/error.util";
 import { deleteFileIfExists } from "../utils/deleteFile.util";
+import { mapCreateEvent } from "../mappers/event/create-event.mapper";
+import { mapUpdateEvent } from "../mappers/event/update-event.mapper";
 
 export const EventService = {
-  async createEvent(data: IEventInput, session?: mongoose.ClientSession) {
-    // check if the event with the same title or startDate already exists
+  // CREATE EVENT
+  async createEvent(
+    data: CreateEventDTOType,
+    session?: mongoose.ClientSession
+  ) {
+    // Check for duplicate title or startDate
     const existingEvent = await Event.findOne({
-      or: [{ title: data.title }, { startDate: data.startDate }],
+      $or: [{ title: data.title }, { startDate: data.startDate }],
     });
+
     if (existingEvent) {
-      throw new Error(
-        "Event with the same title and start date already exists"
+      throw createAppError(
+        "Event with either same title and start date already exists",
+        400
       );
     }
-    const [event] = await Event.create([data], { session });
+
+    // Map input to DB-ready payload
+    const payload = mapCreateEvent(data);
+    const [event] = await Event.create([payload], { session });
+
     return event.toJSON();
   },
 
+  // GET EVENT
   async getEvent({ id, title }: { id?: string; title?: string }) {
     if (id) {
       return Event.findById(id).lean();
     }
-
     if (title) {
-      return Event.findOne({
-        title,
-      }).lean();
+      return Event.findOne({ title }).lean();
     }
 
     return Event.findOne().sort({ createdAt: -1 }).lean();
   },
 
+  // UPDATE EVENT
   async updateEvent(
     id: EventParamsDTOType["id"],
     data: Partial<UpdateEventDTOType>,
     newBannerPath?: string
   ) {
     const event = await Event.findById(id);
+    if (!event) throw createAppError("Event not found", 404);
 
-    if (!event) {
-      throw createAppError("Event not found", 404);
-    }
+    // Use mapper to get clean update payload
+    const updatePayload = mapUpdateEvent(data);
 
-    if (data.title !== undefined) {
-      event.title = data.title;
-    }
+    // Apply all mapped fields at once
+    event.set(updatePayload);
 
-    if (data.description !== undefined) {
-      event.description = data.description;
-    }
-
-    if (data.startDate !== undefined) {
-      event.startDate = data.startDate;
-    }
-
-    if (data.endDate !== undefined) {
-      event.endDate = data.endDate;
-    }
-
-    if (data.location !== undefined) {
-      event.location = data.location;
-    }
-
+    // Handle banner separately
     if (newBannerPath) {
       if (event.eventBanner) {
         await deleteFileIfExists(event.eventBanner);
@@ -76,20 +72,19 @@ export const EventService = {
     await event.save();
     return event.toObject();
   },
-
+  // DELETE EVENT
   async deleteEvent(id: string) {
-    // ✅ Validate ObjectId
+    // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw createAppError("Invalid event ID", 400);
     }
 
     const event = await Event.findById(id);
-
     if (!event) {
       throw createAppError("Event not found", 404);
     }
 
-    // delete event banner if exists
+    // Delete banner file if exists
     if (event.eventBanner) {
       await deleteFileIfExists(event.eventBanner);
     }

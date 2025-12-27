@@ -12,6 +12,4 @@ export const CreateUserDTO = z.object({
   permissions: z.array(z.enum(PERMISSIONS)).optional().default([]),
 });
 
-// export type ICreateUserInput = z.infer<typeof createUserSchema>;
-
-export type CreateUserDTO = z.infer<typeof CreateUserDTO>;
+export type CreateUserDTOType = z.infer<typeof CreateUserDTO>;

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { EventController } from "../controller/event.controller";
 import validateInput from "../middleware/validation.middleware";
-import { GetEventQueryDTO } from "../dtos/event/getEventQuery.dto";
+import { GetEventQueryDTO } from "../dtos/event/get-event-query.dto";
 import { z } from "zod";
 
 const eventRouter = Router();

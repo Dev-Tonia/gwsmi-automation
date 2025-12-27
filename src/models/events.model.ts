@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IEventInput } from "../database/schemas/event.schema";
+import { CreateEventDTOType } from "../dtos/event/create-event.dto";
 
-export interface IEvent extends IEventInput, Document {}
+export interface IEvent extends CreateEventDTOType, Document {}
 
 const EventSchema = new Schema<IEvent>(
   {
