@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const eventSchema = z
+export const CreateEventDTO = z
   .object({
     title: z
       .string()
@@ -25,4 +25,4 @@ export const eventSchema = z
     message: "End date must be after start date",
     path: ["endDate"],
   });
-export type IEventInput = z.infer<typeof eventSchema>;
+export type CreateEventDTOType = z.infer<typeof CreateEventDTO>;

@@ -3,14 +3,14 @@ import { Router } from "express";
 import { authenticate } from "../middleware/auth.middleware";
 import { z } from "zod";
 import { requirePermission } from "../middleware/permission.middleware";
-import { CreateUserDTO } from "../dtos/user/createUser.dto";
+import { CreateUserDTO } from "../dtos/user/create-user.dto";
 import { UserController } from "../controller/user.controller";
 import validateInput from "../middleware/validation.middleware";
 import { uploadEventBanner } from "../middleware/upload.middleware";
 import { EventController } from "../controller/event.controller";
-import { eventSchema } from "../database/schemas/event.schema";
-import { UpdateEventDTO } from "../dtos/event/updateEvent.dto";
-import { EventParamsDTO } from "../dtos/event/eventParams.dto";
+import { CreateEventDTO } from "../dtos/event/create-event.dto";
+import { UpdateEventDTO } from "../dtos/event/update-event.dto";
+import { EventParamsDTO } from "../dtos/event/event-params.dto";
 const adminRouter = Router();
 
 // require authentication and admin role
@@ -29,7 +29,7 @@ adminRouter.post(
   "/events",
   requirePermission("CREATE_TICKETS"),
   uploadEventBanner.single("eventBanner"),
-  validateInput(z.object({ body: eventSchema })),
+  validateInput(z.object({ body: CreateEventDTO })),
   EventController.createEvent
 );
 
