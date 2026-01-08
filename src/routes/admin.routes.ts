@@ -11,12 +11,16 @@ import { EventController } from "../controller/event.controller";
 import { CreateEventDTO } from "../dtos/event/create-event.dto";
 import { UpdateEventDTO } from "../dtos/event/update-event.dto";
 import { EventParamsDTO } from "../dtos/event/event-params.dto";
+import { MealController } from "../controller/meal.controller";
+import { CreateMealDTO } from "../dtos/meal/create-meal.dto";
+import { updateMealDTO } from "../dtos/meal/update-meal.dto";
+import { MealParamsDTO } from "../dtos/meal/meal-params.dto";
 const adminRouter = Router();
 
 // require authentication and admin role
 adminRouter.use(authenticate);
 
-// Route to create a new user
+//  create a new user
 adminRouter.post(
   "/users",
   validateInput(z.object({ body: CreateUserDTO })),
@@ -24,7 +28,7 @@ adminRouter.post(
   UserController.createUser
 );
 
-// route to create events
+//  create events
 adminRouter.post(
   "/events",
   requirePermission("CREATE_TICKETS"),
@@ -33,7 +37,7 @@ adminRouter.post(
   EventController.createEvent
 );
 
-// update event route
+// update event
 
 adminRouter.patch(
   "/events/:id",
@@ -43,11 +47,36 @@ adminRouter.patch(
   EventController.updateEvent
 );
 
+// delete event
 adminRouter.delete(
   "/events/:id",
   requirePermission("CREATE_TICKETS"),
   validateInput(z.object({ params: EventParamsDTO })),
   EventController.deleteEvent
+);
+
+// create meals
+adminRouter.post(
+  "/meals",
+  requirePermission("CREATE_TICKETS"),
+  validateInput(z.object({ body: CreateMealDTO })),
+  MealController.createMeal
+);
+
+// update meals
+adminRouter.patch(
+  "/meals/:id",
+  requirePermission("CREATE_TICKETS"),
+  validateInput(z.object({ body: updateMealDTO, params: MealParamsDTO })),
+  MealController.updateMeal
+);
+
+// delete meals
+adminRouter.delete(
+  "/meals/:id",
+  requirePermission("CREATE_TICKETS"),
+  validateInput(z.object({ params: MealParamsDTO })),
+  MealController.deleteMeal
 );
 
 export default adminRouter;

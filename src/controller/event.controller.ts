@@ -84,7 +84,11 @@ export const EventController = {
 
       const event = await EventService.updateEvent(id, data, bannerPath);
 
-      res.status(200).json(event);
+      res.status(200).json({
+        success: true,
+        message: "Event updated",
+        data: { event },
+      });
     } catch (error) {
       // cleanup  uploaded file if updating event fails
       if (req.file) {
