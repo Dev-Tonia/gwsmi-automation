@@ -73,7 +73,7 @@ export const EventService = {
     return event.toObject();
   },
   // DELETE EVENT
-  async deleteEvent(id: string) {
+  async deleteEvent(id: EventParamsDTOType["id"]) {
     // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw createAppError("Invalid event ID", 400);
