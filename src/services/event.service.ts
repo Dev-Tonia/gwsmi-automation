@@ -1,6 +1,6 @@
 // services/event.service.ts
 import mongoose from "mongoose";
-import Event from "../models/events.model";
+import Event from "../models/event.model";
 import { CreateEventDTOType } from "../dtos/event/create-event.dto";
 import { UpdateEventDTOType } from "../dtos/event/update-event.dto";
 import { EventParamsDTOType } from "../dtos/event/event-params.dto";
