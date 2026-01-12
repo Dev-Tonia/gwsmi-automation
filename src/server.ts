@@ -4,6 +4,7 @@ import cors from "cors";
 import errorMiddleware from "./middleware/error.middleware";
 import router from "./routes/index";
 import path from "path";
+import { notFoundMiddleware } from "./middleware/not-found.middleware";
 
 export const createServer = () => {
   const app = express();
@@ -16,6 +17,11 @@ export const createServer = () => {
 
   app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
   app.use("/api/v1", router);
+
+  // Route not found middleware
+  app.use(notFoundMiddleware);
+
+  // error middleware
   app.use(errorMiddleware);
 
   app.get("/", (req: Request, res: Response) => {
