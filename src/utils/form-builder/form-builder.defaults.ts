@@ -1,0 +1,38 @@
+export const DEFAULT_FORM_FIELDS = [
+  {
+    key: "firstName",
+    label: "First Name",
+    type: "short_text",
+    required: true,
+    isDefault: true,
+    order: 1,
+    options: null,
+  },
+  {
+    key: "lastName",
+    label: "Last Name",
+    type: "short_text",
+    required: true,
+    isDefault: true,
+    order: 2,
+    options: null,
+  },
+  {
+    key: "email",
+    label: "Email Address",
+    type: "email",
+    required: true,
+    isDefault: true,
+    order: 3,
+    options: null,
+  },
+  {
+    key: "phoneNumber",
+    label: "Phone Number",
+    type: "phone",
+    required: true,
+    isDefault: true,
+    order: 4,
+    options: null,
+  },
+] as const;

@@ -97,4 +97,4 @@ const FormBuilderSchema = new Schema(
   { timestamps: true }
 );
 
-export const FormBuilder = mongoose.model("FormBuilder", FormBuilderSchema);
+export default mongoose.model("FormBuilder", FormBuilderSchema);

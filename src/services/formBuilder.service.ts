@@ -1,6 +1,6 @@
 import { CreateFormBuilderDTOType } from "../dtos/form-builder/create-form-builder.dto";
 import { createAppError } from "../utils/error.util";
-import { FormBuilder } from "../models/formBuilder.model";
+import FormBuilder from "../models/formBuilder.model";
 import Event from "../models/event.model";
 import { mapCreateForm } from "../mappers/form-builder/create-form-builder.mapper";
 import { UpdateFormBuilderDTOType } from "../dtos/form-builder/update-form-builder.dto";

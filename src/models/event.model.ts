@@ -7,7 +7,7 @@ const EventSchema = new Schema<IEvent>(
   {
     title: {
       type: String,
-      required: true,
+      required: [true, "Title is required"],
       trim: true,
       unique: true,
     },
@@ -42,6 +42,7 @@ const EventSchema = new Schema<IEvent>(
       type: String,
       default: "",
       trim: true,
+      required: [true, "Location is required"],
     },
   },
   { timestamps: true }
