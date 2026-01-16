@@ -5,6 +5,7 @@ import eventRouter from "./event.routes";
 import mealRouter from "./meal.route";
 import adminIndexRouter from "./admin";
 import formBuilderRouter from "./formBuilder.routes";
+import attendeeRouter from "./attendee.routes";
 
 const router = Router();
 // auth routes
@@ -22,5 +23,8 @@ router.use("/meals", mealRouter);
 
 // form builder routes
 router.use("/form-builder", formBuilderRouter);
+
+// attendee routes
+router.use("/attendees", attendeeRouter);
 
 export default router;
