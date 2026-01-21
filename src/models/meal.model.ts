@@ -2,44 +2,38 @@ import mongoose, { Schema, Types, Document } from "mongoose";
 import { CreateMealDTOType } from "../dtos/meal/create-meal.dto";
 export interface IMeal extends CreateMealDTOType, Document {}
 
-const MealMenuSchema = new Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    limit: {
-      type: Number,
-      required: true,
-      min: 1,
-    },
+const MealMenuSchema = new Schema({
+  title: {
+    type: String,
+    required: true,
+    trim: true,
   },
-  { _id: false }
-);
+  price: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  limit: {
+    type: Number,
+    required: true,
+    min: 1,
+  },
+});
 
-const MealTypeSchema = new Schema(
-  {
-    type: {
-      type: String,
-      enum: ["breakfast", "lunch", "dinner"],
-      required: true,
-    },
-    menu: {
-      type: [MealMenuSchema],
-      validate: {
-        validator: (v: any[]) => v.length > 0,
-        message: "Each meal type must have at least one option",
-      },
+const MealTypeSchema = new Schema({
+  type: {
+    type: String,
+    enum: ["breakfast", "lunch", "dinner"],
+    required: true,
+  },
+  menu: {
+    type: [MealMenuSchema],
+    validate: {
+      validator: (v: any[]) => v.length > 0,
+      message: "Each meal type must have at least one option",
     },
   },
-  { _id: false }
-);
+});
 
 const MealSchema = new Schema(
   {
